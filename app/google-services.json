@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "461802797403",
+    "project_id": "cvgenie-1caf7",
+    "storage_bucket": "cvgenie-1caf7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461802797403:android:8332abf1b86bd3cafb827e",
+        "android_client_info": {
+          "package_name": "com.hocel.cvgenie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461802797403-8vm8ppvjfrm4n1jnbg05sraqpc1t2gv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIJ410nrj9XLcy59qjxMoWynyEvPLEUes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461802797403-8vm8ppvjfrm4n1jnbg05sraqpc1t2gv9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

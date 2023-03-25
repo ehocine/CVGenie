@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">CVGenie</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="have_an_account_login">Have an account?</string>
+    <string name="password_eye">Password Eye</string>
+    <string name="forget_password">Forgot your password?</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="submit">Submit</string>
+    <string name="retrieve_your_password">Retrieve your password</string>
+    <string name="register_an_account">Register</string>
+    <string name="verify_inputs">Please verify your inputs</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="verification_email_sent">Verification email sent</string>
+    <string name="time_out">Time out: couldn\'t connect</string>
+    <string name="email_address_not_verified">Your email address is not verified yet</string>
+    <string name="name">Name</string>
+    <string name="email_already_verified">Your email has already been verified</string>
+    <string name="email_sent">Email sent</string>
+    <string name="successfully_signed_out">Successfully signed out</string>
+    <string name="device_not_connected">Device is not connected to the internet</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="personal_info">Personal info</string>
+    <string name="education">Education</string>
+    <string name="experience">Experience</string>
+</resources>
