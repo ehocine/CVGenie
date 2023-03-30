@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.hocel.cvgenie.components.*
-import com.hocel.cvgenie.data.Education
 import com.hocel.cvgenie.data.Experience
 import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.BottomSheetBackground
@@ -38,8 +37,6 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
     val listOfExperience = remember { mainViewModel.experienceList }
 
     val sheetStateContent by mainViewModel.sheetStateContent.collectAsState()
-
-    var selectedExperienceItem by remember { mutableStateOf(Experience()) }
 
     ModalBottomSheetLayout(
         scrimColor = Color.Black.copy(alpha = 0.6f),
@@ -66,21 +63,24 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                                 modalBottomSheetState.hide()
                             }
                             mainViewModel.resetExperienceFields()
-                        })
+                        }
+                    )
                 }
                 SheetContentState.UPDATE -> {
                     UpdateExperienceSheetContent(
-                        experienceItem = selectedExperienceItem,
                         context = context,
+                        mainViewModel = mainViewModel,
                         onSaveClicked = {
                             mainViewModel.updateExperienceItem(
-                                index = listOfExperience.indexOf(selectedExperienceItem),
+                                index = listOfExperience.indexOf(mainViewModel.selectedExperienceItem.value),
                                 experience = it
                             )
                             scope.launch {
                                 modalBottomSheetState.hide()
                             }
-                        })
+                            mainViewModel.resetExperienceFields()
+                        }
+                    )
                 }
             }
         }
@@ -127,7 +127,7 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                             ExperienceInfoItem(
                                 experienceInfo = experience,
                                 onItemClicked = {
-                                    selectedExperienceItem = it
+                                    mainViewModel.setSelectedExperienceItem(it)
                                     mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
                                     scope.launch {
                                         modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)

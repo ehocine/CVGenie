@@ -116,6 +116,12 @@ dependencies {
     implementation "com.maxkeppeler.sheets-compose-dialogs:core:1.0.2"
     implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2"
 
-//    implementation 'com.itextpdf:itextg:5.5.13.3'
+    // implementation 'com.itextpdf:itextg:5.5.13.3'
     implementation 'com.itextpdf.android:itext7-core-android:7.2.3'
+
+    // PDF viewer
+    implementation 'io.github.grizzi91:bouquet:1.0.1'
+
+    //AdMob
+    implementation 'com.google.android.gms:play-services-ads:22.0.0'
 }

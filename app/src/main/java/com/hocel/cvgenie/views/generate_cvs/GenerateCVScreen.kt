@@ -1,6 +1,7 @@
 package com.hocel.cvgenie.views.generate_cvs
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,24 +11,29 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.hocel.cvgenie.R
+import com.hocel.cvgenie.components.DisplayLoadingDialog
 import com.hocel.cvgenie.components.NavigateUpSheetContent
+import com.hocel.cvgenie.data.CV
+import com.hocel.cvgenie.navigation.Screens
 import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.BottomSheetBackground
 import com.hocel.cvgenie.ui.theme.TextColor
+import com.hocel.cvgenie.utils.*
 import com.hocel.cvgenie.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -38,6 +44,7 @@ fun GenerateCVScreen(
     navController: NavController,
     mainViewModel: MainViewModel
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val modalBottomSheetState =
@@ -49,8 +56,27 @@ fun GenerateCVScreen(
         stringResource(R.string.experience)
     )
 
-    //To reset all fields to initial values
-    mainViewModel.resetCVFields()
+    val state by mainViewModel.creatingCVState.collectAsState()
+
+    val action by mainViewModel.cvDocumentAction
+    var title = "Generate CV"
+
+    var openDeleteDialog by remember { mutableStateOf(false) }
+
+    openDeleteDialog = when (state) {
+        LoadingState.LOADING -> true
+        else -> false
+    }
+
+    when (action) {
+        CVDocumentAction.GENERATE -> {
+            title = "Generate CV"
+        }
+        CVDocumentAction.EDIT -> {
+            title = "Edit CV"
+        }
+        else -> Unit
+    }
 
     val pagerState = rememberPagerState()
 
@@ -77,7 +103,11 @@ fun GenerateCVScreen(
                 onYesClicked = {
                     scope.launch {
                         modalBottomSheetState.hide()
-                        navController.navigateUp()
+                        navController.navigate(Screens.HomeScreen.route) {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                        }
+                        mainViewModel.setCVDocumentAction(action = CVDocumentAction.NONE)
                     }
                 }, onCancel = {
                     scope.launch {
@@ -88,11 +118,58 @@ fun GenerateCVScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Generate a CV", color = MaterialTheme.colors.TextColor) },
+                    title = { Text(title, color = MaterialTheme.colors.TextColor) },
                     actions = {
                         IconButton(onClick = {
-                            scope.launch {
-                                //TODO: Generate a CV
+                            val cv = CV(
+                                firstName = mainViewModel.firstName.value,
+                                lastName = mainViewModel.lastName.value,
+                                dateOfBirth = mainViewModel.dateOfBirth.value,
+                                placeOfBirth = mainViewModel.placeOfBirth.value,
+                                email = mainViewModel.emailAddress.value,
+                                phoneNumber = mainViewModel.phoneNumber.value,
+                                address = mainViewModel.personalAddress.value,
+                                imageUri = mainViewModel.localImageUri.value.toString(),
+                                education = mainViewModel.educationList,
+                                experience = mainViewModel.experienceList,
+                                generatedTime = System.currentTimeMillis()
+                            )
+                            if (cv.imageUri.isNotEmpty()
+                                && cv.firstName.isNotEmpty()
+                                && cv.lastName.isNotEmpty()
+                                && cv.dateOfBirth.isNotEmpty()
+                                && cv.placeOfBirth.isNotEmpty()
+                                && cv.address.isNotEmpty()
+                                && cv.email.isNotEmpty()
+                                && cv.phoneNumber.isNotEmpty()
+                            ) {
+                                mainViewModel.generateCVDocument(
+                                    cvInfo = cv,
+                                    onCvCreated = { fileUri ->
+                                        mainViewModel.setCreatingCVState(LoadingState.IDLE)
+                                        mainViewModel.addOrRemoveCVDocument(
+                                            context = context,
+                                            action = AddOrRemoveAction.ADD,
+                                            CVDocument = cv,
+                                            onAddSuccess = {
+                                                navController.navigate(Screens.HomeScreen.route) {
+                                                    popUpTo(navController.graph.findStartDestination().id)
+                                                    launchSingleTop = true
+                                                }
+                                                mainViewModel.setCVDocumentAction(action = CVDocumentAction.NONE)
+                                                uploadCVDocument(
+                                                    fileUri = fileUri,
+                                                    CVDocument = cv
+                                                )
+                                            },
+                                            onRemoveSuccess = {}
+                                        )
+                                    })
+                            } else {
+                                "Must fill the required fields".toast(
+                                    context,
+                                    Toast.LENGTH_SHORT
+                                )
                             }
                         }) {
                             Icon(
@@ -122,13 +199,17 @@ fun GenerateCVScreen(
                 )
             }
         ) {
-
             Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background)
                 ) {
+                    showInterstitial(context)
+                    DisplayLoadingDialog(
+                        title = "Creating your CV",
+                        openDialog = openDeleteDialog
+                    )
                     TabRow(
                         backgroundColor = MaterialTheme.colors.background,
                         selectedTabIndex = pagerState.currentPage,

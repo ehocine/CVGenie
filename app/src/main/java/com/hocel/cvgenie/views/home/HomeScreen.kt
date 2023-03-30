@@ -15,7 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.hocel.cvgenie.R
 import com.hocel.cvgenie.components.*
 import com.hocel.cvgenie.data.CV
 import com.hocel.cvgenie.navigation.Screens
@@ -23,6 +28,7 @@ import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.BottomSheetBackground
 import com.hocel.cvgenie.ui.theme.ButtonColor
 import com.hocel.cvgenie.ui.theme.TextColor
+import com.hocel.cvgenie.utils.CVDocumentAction
 import com.hocel.cvgenie.utils.LoadingState
 import com.hocel.cvgenie.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
@@ -37,9 +43,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val user by mainViewModel.userInfo.collectAsState()
-    var imageChosen by remember { mutableStateOf(false) }
     var cVToDelete by remember { mutableStateOf(CV()) }
-    val state by mainViewModel.gettingData.collectAsState()
+    val gettingUserDataState by mainViewModel.gettingUserDataState.collectAsState()
 
     val deleteModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
@@ -84,6 +89,8 @@ fun HomeScreen(
                     },
                     backgroundColor = MaterialTheme.colors.ButtonColor,
                     onClick = {
+                        mainViewModel.resetCVFields()
+                        mainViewModel.setCVDocumentAction(action = CVDocumentAction.GENERATE)
                         navController.navigate(Screens.GenerateCVScreen.route)
                     }
                 )
@@ -91,15 +98,15 @@ fun HomeScreen(
             bottomBar = {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
                     // shows a traditional banner test ad
-//                    AndroidView(
-//                        factory = { context ->
-//                            AdView(context).apply {
-//                                setAdSize(AdSize.BANNER)
-//                                adUnitId = context.getString(R.string.ad_id_banner)
-//                                loadAd(AdRequest.Builder().build())
-//                            }
-//                        }
-//                    )
+                    AndroidView(
+                        factory = { context ->
+                            AdView(context).apply {
+                                setAdSize(AdSize.BANNER)
+                                adUnitId = context.getString(R.string.ad_id_banner)
+                                loadAd(AdRequest.Builder().build())
+                            }
+                        }
+                    )
                 }
             }
         ) {
@@ -115,11 +122,11 @@ fun HomeScreen(
                         navController = navController
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    when (state) {
+                    when (gettingUserDataState) {
                         LoadingState.LOADING -> LoadingList()
                         LoadingState.ERROR -> ErrorLoadingResults()
                         else -> {
-                            if (user.listOfCVS.isEmpty()) {
+                            if (user.listOfCVs.isEmpty()) {
                                 NoResults()
                             } else {
                                 Row(
@@ -135,7 +142,7 @@ fun HomeScreen(
                                     )
                                 }
                                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    items(user.listOfCVS) { CVDocument ->
+                                    items(user.listOfCVs) { CVDocument ->
                                         CVDocumentItem(
                                             CVDocument = CVDocument,
                                             onItemClicked = {

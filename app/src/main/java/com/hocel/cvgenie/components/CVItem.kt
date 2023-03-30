@@ -1,5 +1,6 @@
 package com.hocel.cvgenie.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -13,26 +14,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import coil.request.ImageRequest
 import com.hocel.cvgenie.data.CV
+import com.hocel.cvgenie.data.Education
+import com.hocel.cvgenie.data.Experience
+import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.CardColor
 import com.hocel.cvgenie.ui.theme.RedColor
 import com.hocel.cvgenie.ui.theme.TextColor
-import com.hocel.cvgenie.utils.convertTimeStampToDate
+import com.hocel.cvgenie.utils.convertTimeStampToDateAndTime
+import com.rizzi.bouquet.ResourceType
+import com.rizzi.bouquet.VerticalPDFReader
+import com.rizzi.bouquet.rememberVerticalPdfReaderState
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
-import com.hocel.cvgenie.R
-import com.hocel.cvgenie.data.Education
-import com.hocel.cvgenie.data.Experience
 
 @Composable
 fun CVDocumentItem(
@@ -42,6 +39,11 @@ fun CVDocumentItem(
     enableDeleteAction: Boolean = false,
     deleteScannedText: (CVDocument: CV) -> Unit
 ) {
+    val pdfState = rememberVerticalPdfReaderState(
+        resource = ResourceType.Remote(CVDocument.cvUrl),
+        isZoomEnable = true
+    )
+
     val delete = SwipeAction(
         onSwipe = {
             deleteScannedText(CVDocument)
@@ -80,31 +82,26 @@ fun CVDocumentItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (showImage) {
-                    SubcomposeAsyncImage(
+                    Box(
                         modifier = Modifier
                             .height(100.dp)
                             .width(75.dp)
                             .weight(0.18f, fill = false)
                             .clip(RoundedCornerShape(12.dp)),
-                        alignment = Alignment.CenterStart,
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(CVDocument.imageUri)
-                            .crossfade(true)
-                            .error(R.drawable.no_image)
-                            .placeholder(R.drawable.no_image)
-                            .build(),
-                        contentDescription = "Image"
                     ) {
-                        val state = painter.state
-                        if (state is AsyncImagePainter.State.Loading) {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator(color = MaterialTheme.colors.TextColor)
+                        VerticalPDFReader(
+                            state = pdfState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.BackgroundColor)
+                        )
+                        when (pdfState.isLoaded) {
+                            false -> {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator(color = MaterialTheme.colors.TextColor)
+                                }
                             }
-                        } else {
-                            SubcomposeAsyncImageContent(
-                                modifier = Modifier.clip(RectangleShape),
-                                contentScale = ContentScale.Crop
-                            )
+                            else -> Unit
                         }
                     }
                 }
@@ -117,49 +114,49 @@ fun CVDocumentItem(
                         .align(Alignment.CenterVertically)
                         .weight(0.6f)
                 ) {
+
+                    Text(
+                        text = "${CVDocument.firstName} ${CVDocument.lastName}",
+                        color = MaterialTheme.colors.TextColor,
+                        style = MaterialTheme.typography.subtitle2,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Column {
                         Text(
-                            text = "Text content",
+                            text = "CV created on",
                             color = MaterialTheme.colors.TextColor,
                             style = MaterialTheme.typography.subtitle2,
-                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Text(
-                            text = CVDocument.firstName,
-                            color = MaterialTheme.colors.TextColor,
-                            style = MaterialTheme.typography.subtitle2,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .wrapContentSize(Alignment.BottomStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Schedule,
-                            tint = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
-                                alpha = 0.7f
-                            ),
-                            contentDescription = null,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = convertTimeStampToDate(CVDocument.generatedTime),
-                            modifier = Modifier.padding(0.dp, 0.dp, 12.dp, 0.dp),
-                            color = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
-                                alpha = 0.7f
-                            ),
-                            style = MaterialTheme.typography.subtitle2
-                        )
+                                .padding(top = 4.dp)
+                                .wrapContentSize(Alignment.BottomStart)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Schedule,
+                                tint = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
+                                    alpha = 0.7f
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = convertTimeStampToDateAndTime(CVDocument.generatedTime),
+                                modifier = Modifier.padding(0.dp, 0.dp, 12.dp, 0.dp),
+                                color = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
+                                    alpha = 0.7f
+                                ),
+                                style = MaterialTheme.typography.subtitle2
+                            )
+                        }
                     }
                 }
             }

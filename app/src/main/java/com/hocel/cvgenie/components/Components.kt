@@ -9,8 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.hocel.cvgenie.data.CV
 import com.hocel.cvgenie.data.Education
 import com.hocel.cvgenie.data.Experience
-import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.ButtonColor
+import com.hocel.cvgenie.ui.theme.CardColor
 import com.hocel.cvgenie.ui.theme.TextColor
 import com.hocel.cvgenie.utils.AddOrRemoveAction
 import com.hocel.cvgenie.utils.deleteCVDocumentFromStorage
@@ -85,8 +87,6 @@ fun TransparentButton(
     }
 }
 
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NavigateUpSheetContent(
     onYesClicked: () -> Unit,
@@ -170,7 +170,7 @@ fun DeleteCVDocumentSheetContent(
         TransparentButton(
             shape = RoundedCornerShape(0),
             onClick = {
-                mainViewModel.addOrRemoveScannedText(
+                mainViewModel.addOrRemoveCVDocument(
                     context = context,
                     action = AddOrRemoveAction.REMOVE,
                     CVDocument = CVDocument,
@@ -306,14 +306,11 @@ fun AddEducationSheetContent(
 
 @Composable
 fun UpdateEducationSheetContent(
-    educationItem: Education,
     context: Context,
+    mainViewModel: MainViewModel,
     onSaveClicked: (newEducationItem: Education) -> Unit
 ) {
-    var school by remember { mutableStateOf(educationItem.school) }
-    var field by remember { mutableStateOf(educationItem.field) }
-    var diploma by remember { mutableStateOf(educationItem.diploma) }
-    var year by remember { mutableStateOf(educationItem.yearOfDiploma) }
+
     Box(Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -326,40 +323,40 @@ fun UpdateEducationSheetContent(
             Spacer(modifier = Modifier.height(24.dp))
             InfoCVItem(
                 title = "School",
-                value = school,
+                value = mainViewModel.school.value,
                 label = "School",
                 placeholder = "School",
                 onValueChanged = {
-                    school = it
+                    mainViewModel.setSchool(it)
                 })
             Spacer(modifier = Modifier.height(16.dp))
             InfoCVItem(
                 title = "Field",
-                value = field,
+                value = mainViewModel.field.value,
                 label = "Field",
                 placeholder = "Field",
                 onValueChanged = {
-                    field = it
+                    mainViewModel.setField(it)
                 })
             Spacer(modifier = Modifier.height(16.dp))
             InfoCVItem(
                 title = "Diploma",
-                value = diploma,
+                value = mainViewModel.diploma.value,
                 label = "Diploma",
                 placeholder = "Diploma",
                 onValueChanged = {
-                    diploma = it
+                    mainViewModel.setDiploma(it)
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
             InfoCVItem(
                 title = "Year",
-                value = year,
+                value = mainViewModel.yearOfDiploma.value,
                 label = "Year",
                 placeholder = "Year",
                 keyboardType = KeyboardType.Number,
                 onValueChanged = {
-                    year = it
+                    mainViewModel.setYearOfDiploma(it)
                 }
             )
         }
@@ -375,13 +372,16 @@ fun UpdateEducationSheetContent(
             ),
             onClick = {
                 if (
-                    school.isNotEmpty()
-                    && field.isNotEmpty()
-                    && diploma.isNotEmpty()
-                    && year.isNotEmpty()
+                    mainViewModel.school.value.isNotEmpty()
+                    && mainViewModel.field.value.isNotEmpty()
+                    && mainViewModel.diploma.value.isNotEmpty()
+                    && mainViewModel.yearOfDiploma.value.isNotEmpty()
                 ) {
                     val newEducationItem = Education(
-                        school, field, diploma, year
+                        mainViewModel.school.value,
+                        mainViewModel.field.value,
+                        mainViewModel.diploma.value,
+                        mainViewModel.yearOfDiploma.value
                     )
                     onSaveClicked(newEducationItem)
                 } else {
@@ -499,15 +499,10 @@ fun AddExperienceSheetContent(
 
 @Composable
 fun UpdateExperienceSheetContent(
-    experienceItem: Experience,
     context: Context,
+    mainViewModel: MainViewModel,
     onSaveClicked: (newExperienceItem: Experience) -> Unit
 ) {
-    var employer by remember { mutableStateOf(experienceItem.employer) }
-    var position by remember { mutableStateOf(experienceItem.position) }
-    var yearOfStart by remember { mutableStateOf(experienceItem.fromYear) }
-    var stillWorking by remember { mutableStateOf(experienceItem.stillWorking) }
-    var yearOfEnd by remember { mutableStateOf(experienceItem.endYear) }
     Box(Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -520,49 +515,49 @@ fun UpdateExperienceSheetContent(
             Spacer(modifier = Modifier.height(24.dp))
             InfoCVItem(
                 title = "Employer",
-                value = employer,
+                value = mainViewModel.employer.value,
                 label = "Employer",
                 placeholder = "Employer",
                 onValueChanged = {
-                    employer = it
+                    mainViewModel.setEmployer(it)
                 })
             Spacer(modifier = Modifier.height(16.dp))
             InfoCVItem(
                 title = "Position",
-                value = position,
+                value = mainViewModel.position.value,
                 label = "Position",
                 placeholder = "Position",
                 onValueChanged = {
-                    position = it
+                    mainViewModel.setPosition(it)
                 })
             Spacer(modifier = Modifier.height(16.dp))
             InfoCVItem(
                 title = "Year of starting",
-                value = yearOfStart,
+                value = mainViewModel.yearOfStart.value,
                 label = "Year of starting",
                 placeholder = "Year of starting",
                 keyboardType = KeyboardType.Number,
                 onValueChanged = {
-                    yearOfStart = it
+                    mainViewModel.setYearOfStarting(it)
                 }
             )
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = stillWorking,
+                    checked = mainViewModel.stillWorking.value,
                     onCheckedChange = {
-                        stillWorking = it
+                        mainViewModel.setStillWorking(it)
                     })
                 Text(text = "Still working here")
             }
-            if (!stillWorking) {
+            if (!mainViewModel.stillWorking.value) {
                 InfoCVItem(
                     title = "Year of ending",
-                    value = yearOfEnd,
+                    value = mainViewModel.yearOfEnding.value,
                     label = "Year of ending",
                     placeholder = "Year of ending",
                     keyboardType = KeyboardType.Number,
                     onValueChanged = {
-                        yearOfEnd = it
+                        mainViewModel.setYearOfEnding(it)
                     }
                 )
             }
@@ -579,14 +574,20 @@ fun UpdateExperienceSheetContent(
             ),
             onClick = {
                 val newExperienceItem =
-                    Experience(employer, position, yearOfStart, yearOfEnd, stillWorking)
+                    Experience(
+                        mainViewModel.employer.value,
+                        mainViewModel.position.value,
+                        mainViewModel.yearOfStart.value,
+                        mainViewModel.yearOfEnding.value,
+                        mainViewModel.stillWorking.value
+                    )
                 if (
-                    employer.isNotEmpty()
-                    && position.isNotEmpty()
-                    && yearOfStart.isNotEmpty()
+                    mainViewModel.employer.value.isNotEmpty()
+                    && mainViewModel.position.value.isNotEmpty()
+                    && mainViewModel.yearOfStart.value.isNotEmpty()
                 ) {
-                    if (!stillWorking) {
-                        if (yearOfEnd.isNotEmpty()) {
+                    if (!mainViewModel.stillWorking.value) {
+                        if (mainViewModel.yearOfEnding.value.isNotEmpty()) {
                             onSaveClicked(newExperienceItem)
                         } else {
                             "Fields cannot be empty".toast(context, Toast.LENGTH_SHORT)
@@ -623,6 +624,7 @@ fun DatePicker(
 
 @Composable
 fun InfoCVItem(
+    modifier: Modifier = Modifier,
     title: String,
     value: String,
     label: String,
@@ -631,7 +633,7 @@ fun InfoCVItem(
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
     readOnly: Boolean = false,
-    trailingIcon: @Composable() (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     onValueChanged: (value: String) -> Unit
 ) {
     Title(title = title)
@@ -655,7 +657,7 @@ fun InfoCVItem(
         maxLines = maxLines,
         readOnly = readOnly,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp, 0.dp, 16.dp, 0.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -676,7 +678,7 @@ fun SignOutDropMenu(onSignOutClicked: () -> Unit) {
             tint = MaterialTheme.colors.TextColor
         )
         DropdownMenu(
-            modifier = Modifier.background(MaterialTheme.colors.BackgroundColor),
+            modifier = Modifier.background(MaterialTheme.colors.CardColor),
             expanded = expanded,
             onDismissRequest = { expanded = false }) {
             DropdownMenuItem(onClick = {
@@ -692,6 +694,59 @@ fun SignOutDropMenu(onSignOutClicked: () -> Unit) {
                     Spacer(modifier = Modifier.padding(5.dp))
                     Text(
                         text = "Sign out",
+                        modifier = Modifier.padding(start = 5.dp),
+                        color = MaterialTheme.colors.TextColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CVDetailsDropMenu(onEditClicked: () -> Unit, onSaveClicked: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = "Menu",
+            tint = MaterialTheme.colors.TextColor
+        )
+        DropdownMenu(
+            modifier = Modifier.background(MaterialTheme.colors.CardColor),
+            expanded = expanded,
+            onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(onClick = {
+                expanded = false
+                onEditClicked()
+            }) {
+                Row(Modifier.fillMaxWidth()) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit CV",
+                        tint = MaterialTheme.colors.TextColor
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(
+                        text = "Edit CV",
+                        modifier = Modifier.padding(start = 5.dp),
+                        color = MaterialTheme.colors.TextColor
+                    )
+                }
+            }
+            DropdownMenuItem(onClick = {
+                expanded = false
+                onSaveClicked()
+            }) {
+                Row(Modifier.fillMaxWidth()) {
+                    Icon(
+                        imageVector = Icons.Default.Save,
+                        contentDescription = "Save CV",
+                        tint = MaterialTheme.colors.TextColor
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(
+                        text = "Save CV",
                         modifier = Modifier.padding(start = 5.dp),
                         color = MaterialTheme.colors.TextColor
                     )

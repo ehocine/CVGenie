@@ -50,7 +50,6 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
     var pictureChanged by remember { mutableStateOf(false) }
 
     DatePicker(state = calendarState, onDateSelected = { date ->
-        Log.d("Date", "Date: $date")
         mainViewModel.setDateOfBirth(date)
     })
 
@@ -61,6 +60,7 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
         if (uri != null) {
             pictureChanged = true
             mainViewModel.setLocalImageUri(uri)
+            Log.d("Uri", "Uri: $uri")
         } else {
             pictureChanged = false
         }
@@ -105,7 +105,7 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
                     } else {
                         SubcomposeAsyncImageContent(
                             modifier = Modifier.clip(CircleShape),
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
@@ -156,7 +156,6 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        //TODO: change dialog colo
         InfoCVItem(
             title = "Date of birth",
             value = mainViewModel.dateOfBirth.value,
@@ -196,6 +195,7 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
             placeholder = "Personal address",
             singleLine = false,
             maxLines = 3,
+            modifier = Modifier.height(100.dp),
             onValueChanged = { mainViewModel.setPersonalAddress(it) })
 
         Spacer(modifier = Modifier.height(16.dp))

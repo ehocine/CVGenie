@@ -2,6 +2,7 @@ package com.hocel.cvgenie.utils
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
@@ -144,7 +145,7 @@ fun createUser(user: FirebaseUser?) {
             userID = it.uid,
             name = it.displayName.toString(),
             email = it.email.toString(),
-            listOfCVS = listOf()
+            listOfCVs = listOf()
         )
     }
     if (newUser != null) {
@@ -227,17 +228,17 @@ fun uploadCVDocument(
             val storageRef = Firebase.storage.reference
 
             val profileRef =
-                currentUser?.let { storageRef.child("${it.uid}/scannedTexts/${CVDocument.generatedTime}") }
+                currentUser?.let { storageRef.child("${it.uid}/cvs/${CVDocument.generatedTime}") }
 
             // Upload file
             profileRef?.putFile(fileUri)?.addOnSuccessListener {
 
                 currentUser.let { firebaseUser ->
-                    storageRef.child("${firebaseUser.uid}/scannedTexts/${CVDocument.generatedTime}")
+                    storageRef.child("${firebaseUser.uid}/cvs/${CVDocument.generatedTime}")
                         .downloadUrl.addOnSuccessListener {
                             updateCVDocument(
                                 CVDocument = CVDocument,
-                                pictureUri = it.toString()
+                                fileUri = it.toString()
                             )
                         }.addOnFailureListener {
                         }
@@ -251,7 +252,7 @@ fun uploadCVDocument(
 
 
 fun updateCVDocument(
-    pictureUri: String,
+    fileUri: String,
     CVDocument: CV
 ) {
     val db = Firebase.firestore
@@ -263,7 +264,7 @@ fun updateCVDocument(
             LIST_OF_CVs,
             FieldValue.arrayRemove(CVDocument)
         )?.addOnSuccessListener {
-            CVDocument.imageUri = pictureUri
+            CVDocument.cvUrl = fileUri
             dataOfUser.update(
                 LIST_OF_CVs,
                 FieldValue.arrayUnion(CVDocument)
@@ -284,12 +285,39 @@ fun deleteCVDocumentFromStorage(CVDocument: CV) {
             val storageRef = Firebase.storage.reference
 
             val profileRef =
-                currentUser?.let { storageRef.child("${it.uid}/scannedTexts/${CVDocument.generatedTime}") }
+                currentUser?.let { storageRef.child("${it.uid}/cvs/${CVDocument.generatedTime}") }
 
             // Delete file
             profileRef?.delete()?.addOnSuccessListener {
             }?.addOnFailureListener {
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
 
+fun saveFileLocally(context: Context, CVDocument: CV) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            // Get current username
+            val currentUser = Firebase.auth.currentUser
+
+            // Create a storage reference from our app
+            val storageRef = Firebase.storage.reference
+
+            currentUser?.let { firebaseUser ->
+                storageRef.child("${firebaseUser.uid}/cvs/${CVDocument.generatedTime}")
+                    .downloadUrl.addOnSuccessListener {
+                        downloadFile(
+                            mContext = context,
+                            fileName = "${CVDocument.generatedTime}",
+                            fileExtension = ".pdf",
+                            destinationDirectory = Environment.DIRECTORY_DOWNLOADS,
+                            uri = it
+                        )
+                    }.addOnFailureListener {
+                    }
             }
 
         } catch (e: Exception) {

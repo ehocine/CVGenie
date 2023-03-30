@@ -2,9 +2,7 @@ package com.hocel.cvgenie.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +68,29 @@ fun NoResults() {
             style = MaterialTheme.typography.subtitle1,
             fontWeight = FontWeight.W600,
             textAlign = TextAlign.Start
+        )
+    }
+}
+
+@Composable
+fun DisplayLoadingDialog(
+    title: String,
+    openDialog: Boolean
+) {
+    if (openDialog) {
+        AlertDialog(
+            title = {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Title(title = title)
+                }
+            },
+            text = {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.TextColor)
+                }
+            },
+            buttons = {},
+            onDismissRequest = {}
         )
     }
 }

@@ -41,8 +41,6 @@ fun EducationPagerScreen(mainViewModel: MainViewModel) {
 
     val sheetStateContent by mainViewModel.sheetStateContent.collectAsState()
 
-    var selectedEducationItem by remember { mutableStateOf(Education()) }
-
     ModalBottomSheetLayout(
         scrimColor = Color.Black.copy(alpha = 0.6f),
         sheetState = modalBottomSheetState,
@@ -72,18 +70,20 @@ fun EducationPagerScreen(mainViewModel: MainViewModel) {
                 }
                 SheetContentState.UPDATE -> {
                     UpdateEducationSheetContent(
-                        educationItem = selectedEducationItem,
-                        context = context
-                    ) {
-                        mainViewModel.updateEducationItem(
-                            index = listOfEducation.indexOf(
-                                selectedEducationItem
-                            ), education = it
-                        )
-                        scope.launch {
-                            modalBottomSheetState.hide()
+                        context = context,
+                        mainViewModel = mainViewModel,
+                        onSaveClicked = {
+                            mainViewModel.updateEducationItem(
+                                index = listOfEducation.indexOf(
+                                    mainViewModel.selectedEducationItem.value
+                                ), education = it
+                            )
+                            scope.launch {
+                                modalBottomSheetState.hide()
+                            }
+                            mainViewModel.resetEducationFields()
                         }
-                    }
+                    )
                 }
             }
         }
@@ -130,7 +130,7 @@ fun EducationPagerScreen(mainViewModel: MainViewModel) {
                             EducationInfoItem(
                                 educationInfo = education,
                                 onItemClicked = {
-                                    selectedEducationItem = it
+                                    mainViewModel.setSelectedEducationItem(it)
                                     mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
                                     scope.launch {
                                         modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)

@@ -10,9 +10,15 @@ import java.util.*
 fun String.toast(context: Context, length: Int = Toast.LENGTH_SHORT) =
     Toast.makeText(context, this, length).show()
 
-fun convertTimeStampToDate(epoch: Long): String {
+fun convertTimeStampToDateAndTime(epoch: Long): String {
     val date = Date(epoch)
     val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.US)
+    return sdf.format(date)
+}
+
+fun convertTimeStampToDate(epoch: Long): String {
+    val date = Date(epoch)
+    val sdf = SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
     return sdf.format(date)
 }
 
