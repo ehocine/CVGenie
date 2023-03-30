@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.hocel.cvgenie.data.CV
 import com.hocel.cvgenie.data.Education
 import com.hocel.cvgenie.data.Experience
+import com.hocel.cvgenie.ui.theme.BackgroundColor
 import com.hocel.cvgenie.ui.theme.ButtonColor
 import com.hocel.cvgenie.ui.theme.CardColor
 import com.hocel.cvgenie.ui.theme.TextColor
@@ -95,6 +96,7 @@ fun NavigateUpSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colors.BackgroundColor)
     ) {
         Text(
             text = "Changes will be lost, still want to proceed?",
@@ -158,6 +160,7 @@ fun DeleteCVDocumentSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colors.BackgroundColor)
     ) {
         Text(
             text = "Are you sure you want to delete?",
@@ -226,7 +229,11 @@ fun AddEducationSheetContent(
     mainViewModel: MainViewModel,
     onAddClicked: () -> Unit
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.BackgroundColor)
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(
@@ -311,7 +318,10 @@ fun UpdateEducationSheetContent(
     onSaveClicked: (newEducationItem: Education) -> Unit
 ) {
 
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.BackgroundColor)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(
@@ -402,7 +412,10 @@ fun AddExperienceSheetContent(
     mainViewModel: MainViewModel,
     onAddClicked: () -> Unit
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.BackgroundColor)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(
@@ -503,7 +516,10 @@ fun UpdateExperienceSheetContent(
     mainViewModel: MainViewModel,
     onSaveClicked: (newExperienceItem: Experience) -> Unit
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.BackgroundColor)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(

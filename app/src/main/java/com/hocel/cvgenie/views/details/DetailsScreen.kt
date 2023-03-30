@@ -83,7 +83,7 @@ fun DetailsScreen(
             )
         }
     ) {
-        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.BackgroundColor) {
             showInterstitial(context)
             VerticalPDFReader(
                 state = pdfState,

@@ -199,11 +199,11 @@ fun GenerateCVScreen(
                 )
             }
         ) {
-            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.BackgroundColor) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialTheme.colors.BackgroundColor)
                 ) {
                     showInterstitial(context)
                     DisplayLoadingDialog(
@@ -211,7 +211,7 @@ fun GenerateCVScreen(
                         openDialog = openDeleteDialog
                     )
                     TabRow(
-                        backgroundColor = MaterialTheme.colors.background,
+                        backgroundColor = MaterialTheme.colors.BackgroundColor,
                         selectedTabIndex = pagerState.currentPage,
                         divider = {},
                         indicator = {

@@ -1,7 +1,6 @@
 package com.hocel.cvgenie.views.generate_cvs
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -60,7 +59,6 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
         if (uri != null) {
             pictureChanged = true
             mainViewModel.setLocalImageUri(uri)
-            Log.d("Uri", "Uri: $uri")
         } else {
             pictureChanged = false
         }

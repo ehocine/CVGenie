@@ -111,33 +111,38 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                 )
             }
         ) {
-            when {
-                listOfExperience.isEmpty() -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Title(title = "Nothing to show here yet")
+            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.BackgroundColor) {
+                when {
+                    listOfExperience.isEmpty() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Title(title = "Nothing to show here yet")
+                        }
                     }
-                }
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colors.BackgroundColor)
-                    ) {
-                        items(listOfExperience) { experience ->
-                            ExperienceInfoItem(
-                                experienceInfo = experience,
-                                onItemClicked = {
-                                    mainViewModel.setSelectedExperienceItem(it)
-                                    mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
-                                    scope.launch {
-                                        modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.BackgroundColor)
+                        ) {
+                            items(listOfExperience) { experience ->
+                                ExperienceInfoItem(
+                                    experienceInfo = experience,
+                                    onItemClicked = {
+                                        mainViewModel.setSelectedExperienceItem(it)
+                                        mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
+                                        scope.launch {
+                                            modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                        }
+                                    },
+                                    enableDeleteAction = true,
+                                    deleteEducationalInfo = {
+                                        mainViewModel.removeExperienceItem(it)
                                     }
-                                },
-                                enableDeleteAction = true,
-                                deleteEducationalInfo = {
-                                    mainViewModel.removeExperienceItem(it)
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
