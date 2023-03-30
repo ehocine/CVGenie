@@ -268,7 +268,6 @@ class MainViewModel @Inject constructor(
                 image.setHeight(100f)
                 image.setWidth(80f)
 
-                //TODO: Check image scaling issue
                 personalInfoTable.addCell(
                     Cell().add(Paragraph("First name:")).setBorder(Border.NO_BORDER)
                 )
