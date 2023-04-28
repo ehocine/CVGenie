@@ -124,10 +124,13 @@ fun GenerateCVScreen(
                             val cv = CV(
                                 firstName = mainViewModel.firstName.value,
                                 lastName = mainViewModel.lastName.value,
+                                jobTitle = mainViewModel.jobTitle.value,
                                 dateOfBirth = mainViewModel.dateOfBirth.value,
                                 placeOfBirth = mainViewModel.placeOfBirth.value,
                                 email = mainViewModel.emailAddress.value,
                                 phoneNumber = mainViewModel.phoneNumber.value,
+                                skills = mainViewModel.skills.value,
+                                languages = mainViewModel.languages.value,
                                 address = mainViewModel.personalAddress.value,
                                 imageUri = mainViewModel.localImageUri.value.toString(),
                                 education = mainViewModel.educationList,
@@ -137,34 +140,40 @@ fun GenerateCVScreen(
                             if (cv.imageUri.isNotEmpty()
                                 && cv.firstName.isNotEmpty()
                                 && cv.lastName.isNotEmpty()
+                                && cv.jobTitle.isNotEmpty()
                                 && cv.dateOfBirth.isNotEmpty()
                                 && cv.placeOfBirth.isNotEmpty()
                                 && cv.address.isNotEmpty()
                                 && cv.email.isNotEmpty()
                                 && cv.phoneNumber.isNotEmpty()
                             ) {
-                                mainViewModel.generateCVDocument(
+                                mainViewModel.generateV2(
+                                    context,
                                     cvInfo = cv,
-                                    onCvCreated = { fileUri ->
-                                        mainViewModel.setCreatingCVState(LoadingState.IDLE)
-                                        mainViewModel.addOrRemoveCVDocument(
-                                            context = context,
-                                            action = AddOrRemoveAction.ADD,
-                                            CVDocument = cv,
-                                            onAddSuccess = {
-                                                navController.navigate(Screens.HomeScreen.route) {
-                                                    popUpTo(navController.graph.findStartDestination().id)
-                                                    launchSingleTop = true
-                                                }
-                                                mainViewModel.setCVDocumentAction(action = CVDocumentAction.NONE)
-                                                uploadCVDocument(
-                                                    fileUri = fileUri,
-                                                    CVDocument = cv
-                                                )
-                                            },
-                                            onRemoveSuccess = {}
-                                        )
-                                    })
+                                    onCvCreated = {}
+                                )
+//                                mainViewModel.generateCVDocument(
+//                                    cvInfo = cv,
+//                                    onCvCreated = { fileUri ->
+//                                        mainViewModel.setCreatingCVState(LoadingState.IDLE)
+//                                        mainViewModel.addOrRemoveCVDocument(
+//                                            context = context,
+//                                            action = AddOrRemoveAction.ADD,
+//                                            CVDocument = cv,
+//                                            onAddSuccess = {
+//                                                navController.navigate(Screens.HomeScreen.route) {
+//                                                    popUpTo(navController.graph.findStartDestination().id)
+//                                                    launchSingleTop = true
+//                                                }
+//                                                mainViewModel.setCVDocumentAction(action = CVDocumentAction.NONE)
+//                                                uploadCVDocument(
+//                                                    fileUri = fileUri,
+//                                                    CVDocument = cv
+//                                                )
+//                                            },
+//                                            onRemoveSuccess = {}
+//                                        )
+//                                    })
                             } else {
                                 "Must fill the required fields".toast(
                                     context,

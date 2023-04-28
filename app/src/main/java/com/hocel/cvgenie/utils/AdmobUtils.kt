@@ -41,10 +41,3 @@ fun showInterstitial(context: Context) {
         Log.d("Admob", "showInterstitial: The interstitial ad wasn't ready yet.")
     }
 }
-
-//find the current activity from a composable
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}

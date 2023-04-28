@@ -3,6 +3,7 @@ package com.hocel.cvgenie.components
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -321,7 +322,8 @@ fun UpdateEducationSheetContent(
     Box(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.BackgroundColor)) {
+            .background(MaterialTheme.colors.BackgroundColor)
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(
@@ -412,71 +414,81 @@ fun AddExperienceSheetContent(
     mainViewModel: MainViewModel,
     onAddClicked: () -> Unit
 ) {
-    Box(
-        Modifier
+    Column(
+        modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.BackgroundColor)) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Title(title = "Add your experience information")
+            .background(MaterialTheme.colors.BackgroundColor)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Title(title = "Add your experience information")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        InfoCVItem(
+            title = "Employer",
+            value = mainViewModel.employer.value,
+            label = "Employer",
+            placeholder = "Employer",
+            onValueChanged = {
+                mainViewModel.setEmployer(it)
+            })
+        Spacer(modifier = Modifier.height(16.dp))
+        InfoCVItem(
+            title = "Position",
+            value = mainViewModel.position.value,
+            label = "Position",
+            placeholder = "Position",
+            onValueChanged = {
+                mainViewModel.setPosition(it)
+            })
+        Spacer(modifier = Modifier.height(16.dp))
+        InfoCVItem(
+            title = "Year of starting",
+            value = mainViewModel.yearOfStart.value,
+            label = "Year of starting",
+            placeholder = "Year of starting",
+            keyboardType = KeyboardType.Number,
+            onValueChanged = {
+                mainViewModel.setYearOfStarting(it)
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            InfoCVItem(
-                title = "Employer",
-                value = mainViewModel.employer.value,
-                label = "Employer",
-                placeholder = "Employer",
-                onValueChanged = {
-                    mainViewModel.setEmployer(it)
+        )
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = mainViewModel.stillWorking.value,
+                onCheckedChange = {
+                    mainViewModel.setStillWorking(it)
                 })
-            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Still working here")
+        }
+        if (!mainViewModel.stillWorking.value) {
             InfoCVItem(
-                title = "Position",
-                value = mainViewModel.position.value,
-                label = "Position",
-                placeholder = "Position",
-                onValueChanged = {
-                    mainViewModel.setPosition(it)
-                })
-            Spacer(modifier = Modifier.height(16.dp))
-            InfoCVItem(
-                title = "Year of starting",
-                value = mainViewModel.yearOfStart.value,
-                label = "Year of starting",
-                placeholder = "Year of starting",
+                title = "Year of ending",
+                value = mainViewModel.yearOfEnding.value,
+                label = "Year of ending",
+                placeholder = "Year of ending",
                 keyboardType = KeyboardType.Number,
                 onValueChanged = {
-                    mainViewModel.setYearOfStarting(it)
+                    mainViewModel.setYearOfEnding(it)
                 }
             )
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = mainViewModel.stillWorking.value,
-                    onCheckedChange = {
-                        mainViewModel.setStillWorking(it)
-                    })
-                Text(text = "Still working here")
-            }
-            if (!mainViewModel.stillWorking.value) {
-                InfoCVItem(
-                    title = "Year of ending",
-                    value = mainViewModel.yearOfEnding.value,
-                    label = "Year of ending",
-                    placeholder = "Year of ending",
-                    keyboardType = KeyboardType.Number,
-                    onValueChanged = {
-                        mainViewModel.setYearOfEnding(it)
-                    }
-                )
-            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        InfoCVItem(
+            title = "Comment",
+            value = mainViewModel.experienceComment.value,
+            label = "Comment",
+            placeholder = "Comment",
+            onValueChanged = {
+                mainViewModel.setExperienceComment(it)
+            }
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         Button(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp, 16.dp, 16.dp)
                 .height(52.dp),
@@ -516,11 +528,12 @@ fun UpdateExperienceSheetContent(
     mainViewModel: MainViewModel,
     onSaveClicked: (newExperienceItem: Experience) -> Unit
 ) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.BackgroundColor)) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.BackgroundColor)
+                .verticalScroll(rememberScrollState())
+        ) {
             Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -577,10 +590,19 @@ fun UpdateExperienceSheetContent(
                     }
                 )
             }
-        }
+            Spacer(modifier = Modifier.height(16.dp))
+            InfoCVItem(
+                title = "Comment",
+                value = mainViewModel.experienceComment.value,
+                label = "Comment",
+                placeholder = "Comment",
+                onValueChanged = {
+                    mainViewModel.setExperienceComment(it)
+                }
+            )
+            Spacer(modifier = Modifier.height(24.dp))
         Button(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp, 16.dp, 16.dp)
                 .height(52.dp),
@@ -595,7 +617,8 @@ fun UpdateExperienceSheetContent(
                         mainViewModel.position.value,
                         mainViewModel.yearOfStart.value,
                         mainViewModel.yearOfEnding.value,
-                        mainViewModel.stillWorking.value
+                        mainViewModel.stillWorking.value,
+                        mainViewModel.experienceComment.value
                     )
                 if (
                     mainViewModel.employer.value.isNotEmpty()

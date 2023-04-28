@@ -155,6 +155,15 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         InfoCVItem(
+            title = "Job title",
+            value = mainViewModel.jobTitle.value,
+            label = "Job title",
+            placeholder = "Job title",
+            onValueChanged = { mainViewModel.setJobTitle(it) }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InfoCVItem(
             title = "Date of birth",
             value = mainViewModel.dateOfBirth.value,
             label = "Date of birth",
@@ -213,6 +222,24 @@ fun PersonalInfoPagerScreen(mainViewModel: MainViewModel) {
             label = "Phone number",
             placeholder = "Phone number",
             onValueChanged = { mainViewModel.setPhoneNumber(it) })
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InfoCVItem(
+            title = "Skills",
+            value = mainViewModel.skills.value,
+            label = "Skills",
+            placeholder = "Skills separated by comma",
+            onValueChanged = { mainViewModel.setSkills(it) }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InfoCVItem(
+            title = "Languages",
+            value = mainViewModel.languages.value,
+            label = "Languages",
+            placeholder = "Languages separated by comma",
+            onValueChanged = { mainViewModel.setLanguages(it) }
+        )
         Spacer(modifier = Modifier.height(24.dp))
     }
 }

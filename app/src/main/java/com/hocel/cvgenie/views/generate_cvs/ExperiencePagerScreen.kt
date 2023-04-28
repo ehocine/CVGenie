@@ -56,7 +56,8 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                                 position = mainViewModel.position.value,
                                 fromYear = mainViewModel.yearOfStart.value,
                                 stillWorking = mainViewModel.stillWorking.value,
-                                endYear = if (mainViewModel.stillWorking.value) "" else mainViewModel.yearOfEnding.value
+                                endYear = if (mainViewModel.stillWorking.value) "" else mainViewModel.yearOfEnding.value,
+                                comment = mainViewModel.experienceComment.value
                             )
                             mainViewModel.addExperienceItem(experience)
                             scope.launch {

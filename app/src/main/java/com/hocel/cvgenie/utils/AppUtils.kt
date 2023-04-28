@@ -1,6 +1,8 @@
 package com.hocel.cvgenie.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Toast
@@ -34,4 +36,11 @@ fun hasInternetConnection(context: Context): Boolean {
         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
         else -> false
     }
+}
+
+//find the current activity from a composable
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

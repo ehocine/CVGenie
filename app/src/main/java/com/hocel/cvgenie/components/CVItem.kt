@@ -315,6 +315,13 @@ fun ExperienceInfoItem(
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
+                Text(
+                    text = experienceInfo.comment,
+                    color = MaterialTheme.colors.TextColor,
+                    style = MaterialTheme.typography.subtitle2,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

@@ -5,5 +5,6 @@ data class Experience(
     val position : String = "",
     val fromYear : String = "",
     val endYear : String = "",
-    val stillWorking: Boolean = false
+    val stillWorking: Boolean = false,
+    val comment: String = ""
 )
