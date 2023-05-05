@@ -108,7 +108,7 @@ fun EducationPagerScreen(mainViewModel: MainViewModel) {
                     onClick = {
                         mainViewModel.setSheetStateContent(SheetContentState.ADD)
                         scope.launch {
-                            modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                            modalBottomSheetState.show()
                         }
                     }
                 )
@@ -137,7 +137,7 @@ fun EducationPagerScreen(mainViewModel: MainViewModel) {
                                         mainViewModel.setSelectedEducationItem(it)
                                         mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
                                         scope.launch {
-                                            modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                            modalBottomSheetState.show()
                                         }
                                     },
                                     enableDeleteAction = true,

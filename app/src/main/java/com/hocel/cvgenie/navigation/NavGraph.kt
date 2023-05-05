@@ -12,6 +12,7 @@ import com.hocel.cvgenie.viewmodels.MainViewModel
 import com.hocel.cvgenie.views.details.DetailsScreen
 import com.hocel.cvgenie.views.forgot_password.ForgotPassword
 import com.hocel.cvgenie.views.generate_cvs.GenerateCVScreen
+import com.hocel.cvgenie.views.generate_cvs.ViewPreCV
 import com.hocel.cvgenie.views.home.HomeScreen
 import com.hocel.cvgenie.views.login.LoginPage
 import com.hocel.cvgenie.views.register.RegisterPage
@@ -27,7 +28,6 @@ fun NavGraph(
         startDestination = if (!userLoggedIn()) Screens.Login.route else Screens.HomeScreen.route,
         route = "root"
     ) {
-
         composable(
             route = Screens.Login.route,
             exitTransition = {
@@ -147,6 +147,31 @@ fun NavGraph(
         ) {
             GenerateCVScreen(navController = navController, mainViewModel = mainViewModel)
         }
+
+        composable(
+            route = Screens.ViewPreCV.route,
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(animationSpec = tween(300))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(animationSpec = tween(300))
+            }
+        ) {
+            ViewPreCV(navController = navController, mainViewModel = mainViewModel)
+        }
+
         composable(
             route = Screens.DetailsScreen.route,
             exitTransition = {

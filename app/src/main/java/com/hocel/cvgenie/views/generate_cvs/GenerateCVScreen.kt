@@ -26,7 +26,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.hocel.cvgenie.R
-import com.hocel.cvgenie.components.DisplayLoadingDialog
 import com.hocel.cvgenie.components.NavigateUpSheetContent
 import com.hocel.cvgenie.data.CV
 import com.hocel.cvgenie.navigation.Screens
@@ -56,25 +55,18 @@ fun GenerateCVScreen(
         stringResource(R.string.experience)
     )
 
-    val state by mainViewModel.creatingCVState.collectAsState()
-
     val action by mainViewModel.cvDocumentAction
     var title = "Generate CV"
-
-    var openDeleteDialog by remember { mutableStateOf(false) }
-
-    openDeleteDialog = when (state) {
-        LoadingState.LOADING -> true
-        else -> false
-    }
 
     when (action) {
         CVDocumentAction.GENERATE -> {
             title = "Generate CV"
         }
+
         CVDocumentAction.EDIT -> {
             title = "Edit CV"
         }
+
         else -> Unit
     }
 
@@ -85,6 +77,7 @@ fun GenerateCVScreen(
             pagerState.currentPage != 0 -> scope.launch {
                 pagerState.animateScrollToPage(0)
             }
+
             else -> {
                 scope.launch {
                     modalBottomSheetState.show()
@@ -121,6 +114,7 @@ fun GenerateCVScreen(
                     title = { Text(title, color = MaterialTheme.colors.TextColor) },
                     actions = {
                         IconButton(onClick = {
+                            navController.navigate(Screens.ViewPreCV.route)
                             val cv = CV(
                                 firstName = mainViewModel.firstName.value,
                                 lastName = mainViewModel.lastName.value,
@@ -147,33 +141,9 @@ fun GenerateCVScreen(
                                 && cv.email.isNotEmpty()
                                 && cv.phoneNumber.isNotEmpty()
                             ) {
-                                mainViewModel.generateV2(
-                                    context,
-                                    cvInfo = cv,
-                                    onCvCreated = {}
-                                )
-//                                mainViewModel.generateCVDocument(
-//                                    cvInfo = cv,
-//                                    onCvCreated = { fileUri ->
-//                                        mainViewModel.setCreatingCVState(LoadingState.IDLE)
-//                                        mainViewModel.addOrRemoveCVDocument(
-//                                            context = context,
-//                                            action = AddOrRemoveAction.ADD,
-//                                            CVDocument = cv,
-//                                            onAddSuccess = {
-//                                                navController.navigate(Screens.HomeScreen.route) {
-//                                                    popUpTo(navController.graph.findStartDestination().id)
-//                                                    launchSingleTop = true
-//                                                }
-//                                                mainViewModel.setCVDocumentAction(action = CVDocumentAction.NONE)
-//                                                uploadCVDocument(
-//                                                    fileUri = fileUri,
-//                                                    CVDocument = cv
-//                                                )
-//                                            },
-//                                            onRemoveSuccess = {}
-//                                        )
-//                                    })
+                                mainViewModel.setCVInfo(cv)
+                                mainViewModel.generateV2()
+                                navController.navigate(Screens.ViewPreCV.route)
                             } else {
                                 "Must fill the required fields".toast(
                                     context,
@@ -196,7 +166,7 @@ fun GenerateCVScreen(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(24.dp, 24.dp)
+                                .size(24.dp)
                                 .clickable {
                                     scope.launch {
                                         modalBottomSheetState.show()
@@ -215,10 +185,6 @@ fun GenerateCVScreen(
                         .background(MaterialTheme.colors.BackgroundColor)
                 ) {
                     showInterstitial(context)
-                    DisplayLoadingDialog(
-                        title = "Creating your CV",
-                        openDialog = openDeleteDialog
-                    )
                     TabRow(
                         backgroundColor = MaterialTheme.colors.BackgroundColor,
                         selectedTabIndex = pagerState.currentPage,

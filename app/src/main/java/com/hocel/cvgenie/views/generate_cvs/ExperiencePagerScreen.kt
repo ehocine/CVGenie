@@ -106,7 +106,7 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                     onClick = {
                         mainViewModel.setSheetStateContent(SheetContentState.ADD)
                         scope.launch {
-                            modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                            modalBottomSheetState.show()
                         }
                     }
                 )
@@ -135,7 +135,7 @@ fun ExperiencePagerScreen(mainViewModel: MainViewModel) {
                                         mainViewModel.setSelectedExperienceItem(it)
                                         mainViewModel.setSheetStateContent(SheetContentState.UPDATE)
                                         scope.launch {
-                                            modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                            modalBottomSheetState.show()
                                         }
                                     },
                                     enableDeleteAction = true,
